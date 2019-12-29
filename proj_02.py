@@ -52,7 +52,7 @@ for i in np.arange(1,len(Us)):
     
     
 ### FEM-Method:
-A = np.diag(4*np.ones(len(Xs)*len(Ys))) + np.diag(-np.ones(len(Xs)*len(Ys)-1),1) + np.diag(-np.ones(len(Xs)*len(Ys)-1),-1) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)-1), len(xs)+1) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)-1), -len(xs)-1)
+A = np.diag(4*np.ones(len(Xs)*len(Ys))) + np.diag(-np.ones(len(Xs)*len(Ys)-1),1) + np.diag(-np.ones(len(Xs)*len(Ys)-1),-1) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)), len(xs)) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)), -len(xs))
 
 for v in np.arange(len(u)):
     if u[v] == 0:
@@ -60,9 +60,6 @@ for v in np.arange(len(u)):
          A[v,:] = np.zeros_like(A[v,:])
          A[v,v] = 1
          
-### A is somehow wrong. The solution in the end is not right...??
-        
-
 b = np.ones_like(u)*h**2
 for v in np.arange(len(u)):
     if u[v] == 0:
