@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec 20 15:46:57 2019
+Spyder Editor
 
-@author: Barbara
+This is a temporary script file.
 """
+
 
 
 import numpy as np
@@ -16,13 +17,14 @@ import scipy.interpolate as scipl
 #u0 = lambda x,y: np.exp(x*y)
 u0 = lambda x,y: 1+0*x+0*y
 
-n = 5
-xs_help = np.linspace(1/n,1,n)
+n=5
+xs_help = np.linspace(1/(3*n),0.25,3*n)
+xs2_help = np.linspace(0.25+1/n,1,n)
 h = xs_help[1]-xs_help[0]
-xs = np.concatenate((-xs_help[::-1], np.array([0]), xs_help))
+h2 = xs2_help[1]-xs2_help[0]
+xs = np.concatenate((-xs2_help[::-1],-xs_help[::-1], np.array([0]), xs_help, xs2_help))
 
-Xs, Ys = np.meshgrid(xs,xs)
-
+Xs,Ys = np.meshgrid(xs,xs)
 Us = u0(Xs,Ys)
 for i in np.arange(len(xs)):                   ### BC and L shape
     for j in np.arange(len(xs)):
@@ -35,21 +37,15 @@ for i in np.arange(len(xs)):                   ### BC and L shape
 plt.scatter(Xs,Ys,c=Us)
 plt.colorbar()
 plt.show()
-
-
 plt.imshow(Us,origin='center')
 plt.show()
 plt.imshow(Us,interpolation='Gaussian',origin='center',extent=[-1,1,-1,1])
 plt.show()
 #############################################
-
-
 f = lambda x,y: 1+0*x+0*y
 #plt.imshow(f(Xs,Ys), interpolation='Gaussian',origin='center',extent=[-1,1,-1,1])
 #plt.colorbar()
 #plt.show()
-
-
 u = Us[:,0]    
 for i in np.arange(1,len(Us)):
     u = np.concatenate((u,Us[:,i]))
@@ -58,8 +54,6 @@ for i in np.arange(1,len(Us)):
 ### FEM-Method:
 A = np.diag(4*np.ones(len(Xs)*len(Ys))) + np.diag(-np.ones(len(Xs)*len(Ys)-1),1) + np.diag(-np.ones(len(Xs)*len(Ys)-1),-1) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)), len(xs)) + np.diag(-np.ones(len(Xs)*len(Ys)-len(xs)), -len(xs))
 ### Fixed: the two outer diagonals where at the wrong place.
-
-
 for v in np.arange(len(u)):
     if u[v] == 0:
          A[:,v] = np.zeros_like(A[:,v])
@@ -67,7 +61,6 @@ for v in np.arange(len(u)):
          A[v,v] = 1
          8
                 
-
 b = np.ones_like(u)*h**2
 for v in np.arange(len(u)):
     if u[v] == 0:
@@ -75,23 +68,22 @@ for v in np.arange(len(u)):
         8
         
 sol = np.linalg.solve(1/h**2*A,b)
-
 Ugrid = sol.reshape((len(Xs),len(Ys)))
-
 plt.imshow(Ugrid, interpolation='Gaussian',origin='center',extent=[-1,1,-1,1])
 plt.colorbar()
 plt.show()
 #4*u[i,i]-u[i,i+1]-u[i,i-1]-u[i+1,i]-u[i-1,i]
-
 """
 
 ##############################################################
 ##############################################################
 
 def fem_poisL(n):                                 ### L shape
-    xs_help = np.linspace(1/n,1,n)
+    xs_help = np.linspace(1/(2*n),0.25,2*n)
+    xs2_help = np.linspace(0.25+1/n,1,n)
     h = xs_help[1]-xs_help[0]
-    xs = np.concatenate((-xs_help[::-1], np.array([0]), xs_help))
+    h2 = xs2_help[1]-xs2_help[0]
+    xs = np.concatenate((-xs2_help[::-1],-xs_help[::-1], np.array([0]), xs_help, xs2_help))
 
     Xs, Ys = np.meshgrid(xs,xs)
     
@@ -124,7 +116,7 @@ def fem_poisL(n):                                 ### L shape
             b[v] = 0
             8
         
-    sol = np.linalg.solve(1/h**2*A,b)
+    sol = np.linalg.solve(1/h2**2*A,b)
     
     return(sol,xs)
 
@@ -134,11 +126,14 @@ def fem_poisL(n):                                 ### L shape
 
 
 def fem_poisQ(n):                         ### Square
-    xs_help = np.linspace(1/n,1,n)
+    xs_help = np.linspace(1/(2*n),0.25,2*n)
+    xs2_help = np.linspace(0.25+1/n,1,n)
     h = xs_help[1]-xs_help[0]
-    xs = np.concatenate((-xs_help[::-1], np.array([0]), xs_help))
+    h2 = xs2_help[1]-xs2_help[0]
+    xs = np.concatenate((-xs2_help[::-1],-xs_help[::-1], np.array([0]), xs_help, xs2_help))
 
     Xs, Ys = np.meshgrid(xs,xs)
+    
     
     Us = np.ones((len(Xs),len(Ys)))
     for i in np.arange(len(xs)):                   ### BC
@@ -166,7 +161,7 @@ def fem_poisQ(n):                         ### Square
             b[v] = 0
             8
         
-    sol = np.linalg.solve(1/h**2*A,b)
+    sol = np.linalg.solve(1/h2**2*A,b)
     
     return(sol,xs)
 
@@ -177,12 +172,13 @@ def fem_poisQ(n):                         ### Square
 ap = []
 ap2 = []
 hs = []
-xxs_help = np.linspace(1/60,1,60)
+xxs_help = np.linspace(1/70,1,70)
 xxs = np.concatenate((-xxs_help[::-1], np.array([0]), xxs_help))
-for n in [5,10,15,20,25,30,40,50,60]:
+
+for n in [5,7,10]:
     sol,xs = fem_poisL(n)
     hs.append(xs[1]-xs[0])
-    ap.append(scipl.RectBivariateSpline(xs,xs,sol.reshape((len(xs),len(xs))))(xxs,xxs))
+    ap.append(scipl.RectBivariateSpline(xs,xs,sol.reshape((len(xs),len(xs))),kx = 2)(xxs,xxs))
     #print(n)
     
     ### square for comparison
@@ -192,9 +188,12 @@ for n in [5,10,15,20,25,30,40,50,60]:
     
 err = []
 err2 = []
-for l in np.arange(8):
-    err.append(np.max(np.abs(ap[l]-ap[8].reshape((len(xxs),len(xxs))))))
-    err2.append(np.max(np.abs(ap2[l]-ap2[8].reshape((len(xxs),len(xxs))))))
+
+v = len(ap)-1
+
+for l in np.arange(v):
+    err.append(np.max(np.abs(ap[l]-ap[v])))
+    err2.append(np.max(np.abs(ap2[l]-ap2[v])))
     
 plt.loglog(hs[:-1],err,label='Lshape')
 plt.loglog(hs[:-1],err2,label='Square')
@@ -206,5 +205,3 @@ plt.show()
 ### Lshape isn't "worse" than the square?? 
 ### Mistake in the interpolation and error estimation (e.g. maximal error)???
 ### Or something before that?
-
-    
