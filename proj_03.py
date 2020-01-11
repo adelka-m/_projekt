@@ -14,7 +14,7 @@ import scipy.interpolate as scipl
 """
 #u0 = lambda x,y: np.sin(np.pi*x) + np.sin(np.pi*y)+3
 #u0 = lambda x,y: np.exp(x*y)
-u0 = lambda x,y: 1+0*x+0*y
+u0 = lambda x,y: 
 
 n = 5
 xs_help = np.linspace(1/n,1,n)
@@ -207,4 +207,6 @@ plt.show()
 ### Mistake in the interpolation and error estimation (e.g. maximal error)???
 ### Or something before that?
 
-    
+plt.imshow(fem_poisQ(5)[0].reshape((n*2+1,n*2+1)), interpolation='none',origin='center',extent=[-1,1,-1,1])
+plt.colorbar()
+plt.show()
