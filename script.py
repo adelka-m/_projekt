@@ -67,38 +67,44 @@ def conjugated_gradients(n):
     	resnew = scalar_multiplication(res,res,n)
 
 
-    	if (np.absolute(res[(n)//2][(n)//2])) < 1e-3:  # value of residuum at kink point
-    		print( np.absolute(res[(n)//2][(n)//2]) )
-    		#print( "number of steps: ", k, ", for n = ",n )
-    		break
+    	#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
+    	 	#print( np.absolute(res[(n)//2][(n)//2]) )
+    	 	#print( "number of steps: ", k, ", for n = ",n )
+    	 	#break
     	
+    	if k > 10:
+    	 	break
 	
 
     	k = k+1
     	p = res + (resnew / resold) * p
     	resold = resnew
 
-    return np.absolute(res[(n)//2][(n)//2])
+    return u
+   # return np.absolute(res[(n)//2][(n)//2]), np.absolute(res[1][1])
  
 
-res_at_kink = []
-N = np.arange(10,51,5)
+res = []
+N = [10]
 for n in N:
-	res_at_kink.append(conjugated_gradients(2*n+1))
+	print(n)
+	res.append(conjugated_gradients(2*n+1))
+
 
 xx = []
 for n in N:
-	xx.append(1/math.sqrt(n)) 
+	xx.append(1/math.sqrt(2*n+1)*res[0]*math.sqrt(2*N[0]+1)) 
 
-xx = np.subtract(xx,res_at_kink)
-plt.semilogy( 2*N+1, xx , linestyle='--', label = 'order of 1/2')
-plt.semilogy( 2*N+1, res_at_kink, marker='o')
-plt.title("Value of residual error at the kink point")
-plt.xlabel("Number of points") 
-plt.ylabel("Error (log scale)")
-plt.legend()
+
+
+##plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of 1/2')
+#plt.semilogy( 2*N+1, res, linestyle='dotted',marker='o',label = '1/n * residuum')
+
+#plt.title("Value of residual error")
+#plt.xlabel("Number of points") 
+#plt.ylabel("Error (log scale)")
+#plt.legend()
+#plt.show()
+plt.imshow(res[0], interpolation = 'none', origin = 'center', extent = [-1,1,-1,1])
+plt.colorbar()
 plt.show()
-		
-# plt.imshow(res, interpolation = 'none', origin = 'center', extent = [-1,1,-1,1])
-# plt.colorbar()
-# plt.show()
