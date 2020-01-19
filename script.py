@@ -34,10 +34,12 @@ def adaptive_grid():
 
 def conjugated_gradients(n):
     ''' Function for performing CG for our problem. 
-           u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.def.   ---> CG  '''
+           u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.semidef.   ---> CG  '''
     b = np.zeros((n,n))     
     u = np.zeros((n,n))
     Ap = np.zeros((n,n))
+    res = np.zeros((n,n))
+    p = np.zeros((n,n))
 
     h = 1/n
     for i in range(1,(n+1)//2):
@@ -48,22 +50,25 @@ def conjugated_gradients(n):
 
     res = b
     p = res
-
+    print(p)
     resold = scalar_multiplication(res,res,n)
-    resnew = resold
+    resnew = 0
 
     k=1
     while True:
     	for i in range(1,(n+1)//2):
     		for j in range(1,(n+1)//2):
     			Ap[i][j] = 4*p[i][j] - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1])
+
     			Ap[n-1-i][j] = 4*p[n-1-i][j] - (p[n-1-(i+1)][j]+p[n-1-(i-1)][j]+p[n-1-i][j+1]+p[n-1-i][j-1])
     			Ap[i][n-1-j] = 4*p[i][n-1-j] - (p[i+1][n-1-j]+p[i-1][n-1-j]+p[i][n-1-(j+1)]+p[i][n-1-(j-1)])
-
+    	
     	alpha = resold / scalar_multiplication(p,Ap,n)
     	u = u + alpha * p
     	res = res - alpha * Ap
 
+    	if k==1:
+      		print(Ap)
     	resnew = scalar_multiplication(res,res,n)
 
 
@@ -72,7 +77,7 @@ def conjugated_gradients(n):
     	 	#print( "number of steps: ", k, ", for n = ",n )
     	 	#break
     	
-    	if k > 10:
+    	if k > 0:
     	 	break
 	
 
@@ -80,12 +85,12 @@ def conjugated_gradients(n):
     	p = res + (resnew / resold) * p
     	resold = resnew
 
-    return u
-   # return np.absolute(res[(n)//2][(n)//2]), np.absolute(res[1][1])
+    return math.sqrt(1/(0.75*n)*resnew)
+
  
 
 res = []
-N = [10]
+N = np.arange(4,11,10)
 for n in N:
 	print(n)
 	res.append(conjugated_gradients(2*n+1))
@@ -93,18 +98,18 @@ for n in N:
 
 xx = []
 for n in N:
-	xx.append(1/math.sqrt(2*n+1)*res[0]*math.sqrt(2*N[0]+1)) 
+	xx.append( 1/ math.sqrt((2*n+1)**2*0.75) * res[0] * math.sqrt((2*N[0]+1)**2*0.75) )
 
 
 
-##plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of 1/2')
-#plt.semilogy( 2*N+1, res, linestyle='dotted',marker='o',label = '1/n * residuum')
+plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of -1/2')
+plt.semilogy( 2*N+1, res, linestyle='dotted',marker='o',label = 'discrete L2 norm of residuum')
 
-#plt.title("Value of residual error")
-#plt.xlabel("Number of points") 
-#plt.ylabel("Error (log scale)")
-#plt.legend()
-#plt.show()
-plt.imshow(res[0], interpolation = 'none', origin = 'center', extent = [-1,1,-1,1])
-plt.colorbar()
+plt.title("Value of residual error")
+plt.xlabel("Number of points") 
+plt.ylabel("Error (log scale)")
+plt.legend()
 plt.show()
+# plt.imshow(res[0], interpolation = 'lanczos', origin = 'center', extent = [-1,1,-1,1])
+# plt.colorbar()
+# plt.show()
