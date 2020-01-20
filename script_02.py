@@ -2,21 +2,31 @@
 This project is going to investigate the impact of nonsmooth border (in particular L shape) on the smoothness of a solution.
 '''
 '''            ---u_0 = 0---
-              |           |
-              |           |
-              |           |
-              |           | 
-              n         (0,0) ----------
-              |                        |
-              |                      u_0 = 0
-              |                        |
-              |                        |
-              -u_0 = 0---- n ------(1,-1)  
- '''
+          |           |
+          |           |
+          |           |
+          |           | 
+          n         (0,0) ----------
+          |                        |
+          |                      u_0 = 0
+          |                        |
+          |                        |
+          -u_0 = 0---- n ------(1,-1)  
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+
+def grid_refinement(A, boundary, res, n, counter):
+
+    length = len(A)
+    residuum = 1/length * np.sum(res)
+    for i in range(length):
+        if i not in boundary:
+            if res[i] > residuum:
+               length = 0 
+    return 0
 
 
 
@@ -176,60 +186,53 @@ def init_array_of_grid_points(n):
                 
     return A, boundary
 
-def scalar_multiplication(S,E):
-    ''' Implementation of some kind of a scalar multiplication of two matrices S, E of the dimension n*n. '''
-    x = 0
-    for i in range(len(S)):
-            x = x + S[i]*E[i]
-
-    return x
 
 def conjugated_gradients(n):
     ''' Function for performing CG for our problem. 
-           u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.semidef.   ---> CG  '''
+       u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.semidef.   ---> CG  '''
 
     A, boundary = init_array_of_grid_points(n)
-    p = A[:,0]
+    p = A[:,0].copy()
     print('A O ', A[:,0])
-    
+
     resold = np.dot(p,p)
-    res = p
+    res = p.copy()
     resnew = 0
 
     k=1
     while True:
         for i in range(len(A)):
             if i not in boundary:
-                print(1/A[i,5]**2)
-               # A[i,0] = (1/A[i,5]**2 + 1/A[i,6]**2 + 1/A[i,7]**2 + 1/A[i,8]**2) * p[i] - ( 1/A[i,5]**2*p[int(A[i,1])] + 1/A[i,6]**2 *p[int(A[i,2])] +  1/A[i,7]**2*p[int(A[i,3])] +  1/A[i,8]**2*p[int(A[i,4])] )
-                A[i,0] = (A[i,5]**2 + A[i,6]**2 + A[i,7]**2 + A[i,8]**2) * p[i] - ( A[i,5]**2*p[int(A[i,1])] + A[i,6]**2 *p[int(A[i,2])] +  A[i,7]**2*p[int(A[i,3])] +  A[i,8]**2*p[int(A[i,4])] )
-
+                #print(p[i])
+                #print('point ', i,'(',1/A[i,5]**2,' + ',1/A[i,6]**2,'+', 1/A[i,7]**2,'+', 1/A[i,8]**2,') *', p[i], '-(', 1/A[i,5]**2, '*',int(A[i,1]),'+', 1/A[i,6]**2, '*', int(A[i,2]), '+',  1/A[i,7]**2,'*', int(A[i,3]), '+',  1/A[i,8]**2, '*', int(A[i,4]) )
+                A[i,0] = (1/A[i,5]**2 + 1/A[i,6]**2 + 1/A[i,7]**2 + 1/A[i,8]**2) * p[i] - ( 1/A[i,5]**2*p[int(A[i,1])] + 1/A[i,6]**2 *p[int(A[i,2])] +  1/A[i,7]**2*p[int(A[i,3])] +  1/A[i,8]**2*p[int(A[i,4])] )
+                #print(p[i]) 
         
         
-        res = res - resold / np.dot(p,A[:,0])* A[:,0] 
-        print(res)
+        res = res - ( resold /  np.dot(p,A[:,0]) ) * A[:,0].copy()
+        
         resnew = np.dot(res,res)
-        print(resnew)
+        
 
         #if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
         #print( np.absolute(res[(n)//2][(n)//2]) )
         #print( "number of steps: ", k, ", for n = ",n )
         #break
       
-        if k > 2:
+        if k > 5:
             break
         
 
         k = k+1
-        p = res + (resnew / resold) * p
-        resold = resnew
+        p = res.copy() + (resnew / resold) * p.copy()
+        resold = resnew.copy()
 
-    return math.sqrt(1/(3*n**2)*resnew)
+    return math.sqrt(resnew)/(3*n)
 
- 
+
 
 res = []
-N = np.arange(4,10,10)
+N = np.arange(4,40,5)
 for n in N:
     print(n)
     res.append(conjugated_gradients(n))
@@ -237,12 +240,13 @@ for n in N:
 
 xx = []
 for n in N:
-    xx.append( 1/ math.sqrt((2*n+1)**2*0.75) * res[0] * math.sqrt((2*N[0]+1)**2*0.75) )
+    xx.append( 1/ math.sqrt(3*n**2) * res[0] * math.sqrt(3*N[0]**2) )
+
+print('res for ', 3* N[0]**2, 'points is', res[0])
 
 
-
-plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of -1/2')
-plt.semilogy( 2*N+1, res, linestyle='dotted',marker='o',label = 'discrete L2 norm of residuum')
+plt.semilogy(  3* N**2, xx , linestyle='dashed', label = 'order of -1/2')
+plt.semilogy(  3* N**2, res, linestyle='dotted',marker='o',label = 'discrete L2 norm of residuum')
 
 plt.title("Value of residual error")
 plt.xlabel("Number of points") 
