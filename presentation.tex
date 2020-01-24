@@ -1,60 +1,59 @@
-\documentclass[pagesize]{scrartcl}
+\documentclass{beamer}
 
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
 \usepackage{enumitem}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{graphicx}
+\usepackage{bm}
+
 \usepackage{tikz}
-\usepackage{wrapfig}
+\usepackage{hyperref}
 \usepackage{animate}
-%\usepackage{blindtext}
-%\usepackage[bottom=4cm]{geometry}
-%\pagestyle{empty} % no page numbering
-\usepackage[hidelinks]{hyperref}
+
+\usetheme{Dresden}
+\usecolortheme{wolverine}
 
 
+\title{\textbf{Poisson's equation\\
+ on an L-shaped domain}}
+\date{\includegraphics[width=4cm]{sol37.png}\\[2ex]
+27 January 2020}
+\author{Adéla Moravová \and Barbara Präg 
+\vspace{-0.7cm}}
 
 
-%verhindert einrückung bei neuem absatz
-\setlength{\parindent}{0em} 
-
-\vspace{-1cm}
 \begin{document}
-    \begin{center}
-	\textsc{ \bfseries{\huge
-			Poisson's equation\\ on an L-shaped domain}}
-\\ 
-	\vspace{2mm} Adéla Moravová, Barbara Präg \quad 27 January 2020
-
-\end{center}
-
-%\vspace{0.5cm}
-
-%Investigate the regularity of the solution of Poisson's equation on an L-shaped domain. This is done by refining the discretization at the corner points. 
-
-%What do you observe? How do these results compare to the results discussed in the exercises (for Poisson's equation on a square)?
 
 
+\maketitle
+
+
+\begin{frame}{Contents}
+\tableofcontents
+\end{frame}
 
 \section{Poisson's equation}
 
-\begin{minipage}{0.75\textwidth}
-Consider the following elliptic problem with Dirichlet\\ boundary conditions 
-\begin{align*}
-	- \Delta u &= f \ \text{in} \ \Omega\\
-	u &= 0 \ \text{on} \ \partial \Omega
-\intertext{and its weak formulation with solution $u \in H_0^1(\Omega)$}
-	\int_\Omega \nabla u \cdot \nabla v \ \text{d}x &= \int_\Omega f v \ \text{d}x \ \ \ \forall v \in H_0^1(\Omega),
-\intertext{abbreviated as}
-	a(u,v) &= (f,v) \ \ \forall v \in H_0^1(\Omega).
-\end{align*}
-\end{minipage}
-\begin{minipage}{0.2\textwidth}
+\begin{frame}{Poisson's equation}
+
+$\begin{cases}- \Delta u = f \ \text{in} \ \Omega  \\
+\ \ \ \ \  u = 0 \ \text{on} \ \partial \Omega 
+\end{cases}$\\[0.5cm]
+
+Weak formulation with solution $u\in H_0^1(\Omega)$:\\
+
+$\displaystyle a(u,v) = \int_\Omega \nabla u \cdot \nabla v \ \text{d}x = \int_\Omega f v \ \text{d}x = (f,v) \ \ \ \forall v \in H_0^1(\Omega)$\\[0.5cm]
+
+
+\begin{minipage}[t]{0.3\textwidth}
 \centering
-\begin{tikzpicture}[scale=1]
+	\begin{tikzpicture}[scale=1]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
 
@@ -69,10 +68,10 @@ Consider the following elliptic problem with Dirichlet\\ boundary conditions
  	\draw (0.5,0.5) node {$\Omega$};
  		
 \end{tikzpicture}\\
-
-vs.\\[0.3cm]
-
-\begin{tikzpicture}[scale=1]
+\end{minipage}
+\begin{minipage}[b]{0.3\textwidth}
+\centering
+	\begin{tikzpicture}[scale=1]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
  	\fill[fill = white] (0,0) rectangle (1,-1);
@@ -89,28 +88,33 @@ vs.\\[0.3cm]
  		
 \end{tikzpicture}
 \end{minipage}
+\begin{minipage}[b]{0.3\textwidth}
+	\includegraphics[height=2.6cm,trim=0 0 3.4cm 0,clip=true]{sol1.png}
+\end{minipage}
+
+\end{frame}
 
 
-\flushleft
+\begin{frame}{Reminder: Sobolev spaces and their norms}
+Let $\Omega \subset \mathbb{R}^n$ be open.\\[0.8cm]
 
-%\textbf{Reminder:} Sobolev spaces and their norms, $\Omega \subset \mathbb{R}^n$ open
-
-%$H^k(\Omega) = \{u \in L^2(\Omega): D^\alpha u \in L^2(\Omega)$ for all $|a| \leq k\}$
+$H^k(\Omega) = \{u \in L^2(\Omega): D^\alpha u \in L^2(\Omega)$ for all $|a| \leq k\}$\\[0.5cm]
 %--> $H^0(\Omega) = L^2(\Omega)$
 
-%$(u,v)_{H^k} = \sum_{|a| \leq k} \int_\Omega D^\alpha u \ D^\alpha v \ \text{d}x$
+$(u,v)_{H^k} = \sum_{|a| \leq k} \int_\Omega D^\alpha u \ D^\alpha v \ \text{d}x$\\[0.5cm]
 
-%$\|u\|_{H^k(\Omega)} = \sqrt{(u,u)_{H^k}}$
+$\|u\|_{H^k(\Omega)} = \sqrt{(u,u)_{H^k}}$\\[0.5cm]
 
-%$u \in H_0^1(\Omega)$ if $u \in H^1(\Omega)$ and "$u |_ { \partial \Omega} = 0$".\\[1cm]
+$u \in H_0^1(\Omega)$ if $u \in H^1(\Omega)$ and "$u |_ { \partial \Omega} = 0$"
+\end{frame}
 
 
-\vspace{0.1cm}
 \section{Shift theorems}
 
-Let $\Omega$ be a convex polygonal domain in $\mathbb{R}^2$. If $u$ is the weak solution to our problem, then %%% "a" or "the" weak solution??
+\begin{frame}{Shift theorems}
+Let $\Omega$ be a \emph{convex polygonal} domain in $\mathbb{R}^2$ and $u$ the weak solution to our problem. Then 
 \begin{equation}
-	\| u \|_{H^2} \leq C \| f \|_{H^0} \ \text{for} \ f \in H^0(\Omega) = L^2(\Omega).  \label{st}
+	\| u \|_{H^2} \leq C \| f \|_{H^0} \ \text{for} \ f \in H^0(\Omega) = L^2(\Omega).
 \end{equation}\\[0.5ex]
 % --> The solution is two times more "regular" than the right-hand side f. The elliptic differential operator "smoothes"
 
@@ -118,43 +122,70 @@ For a smooth boundary $\partial \Omega$ it even holds that \begin{equation*}
 	\|u\|_{H^{m+2}} \leq C \|f\|_{H^m} \ \text{for} \ f \in  H^m(\Omega) \ \text{and} \ m \geq 0.
 \end{equation*}
 %Do we need to include m=-1? Should we then define it?
-For a square $m=0$ and $m=1$ are possible.
+%For a square $m=0$ and $m=1$ are possible.
+
+% Similar result can be obtained for fractional-order Sobolev spaces.
+% Add more here??
+
+These regularity estimates never hold for non-convex polygonal domains like the L-shape.
+
+\end{frame}
 
 
-These regularity estimates never hold for non-convex polygonal domains like the L-shape.\\[0.5ex]
+
+\begin{frame}{Numerical solution of Poisson's equation on an L-shaped domain}
+
+regular triangulation with right-angled triangles\\
+finite element method\\
+conjugate gradients solver\\
+
+\animategraphics[autoresume, height=3.5cm]{15}{sol}{1}{15}
+
+%%% the gif but I need it in single png-frames :(
+%%% Latex does apparently not accept gifs...
+
+\end{frame}
+
+
+
+\begin{frame}{Regularity problem of the L}
 
 \begin{minipage}{0.4\textwidth}
-	\includegraphics[scale=0.4]{sol37.png}
-	%\animategraphics[autoresume, height=4cm]{15}{sol}{1}{15}
+\begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[height=4cm, trim=2cm 0 1.5cm 0, clip=true]{Figure_1.png}};
+    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+    	\draw[->,red, ultra thick] (0.5,0.4845) -- (0.5,0.7);
+    	\draw[->,red, ultra thick] (0.5,0.49) -- (0.3,0.49);
+    	\draw[->,red, ultra thick] (0.5,0.49) -- (0.32,0.68);
+        %\draw[red,ultra thick,rounded corners] (0.62,0.65) rectangle (0.78,0.75);
+    \end{scope}
+\end{tikzpicture}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-	\includegraphics[scale=0.4]{derivatives2.png}
-
+\includegraphics[height=5cm]{derivatives2.png}
 \end{minipage}
-% Show that the derivative blows up at the kink.
 
-%%% Comments on that...
-
-
-% Show this...
+\end{frame}
 
 
 
-
-\newpage
 \section{Finite element error}
+
+\begin{frame}{Finite element error}
 Let $u$ be the weak solution of our elliptic problem, $\mathcal{T}_h$ a regular triangulation of $\Omega$ and $V_h = \{u \in C(\Omega) \cap H_0^1(\Omega): u|_T = \mathbb{P}^1 \ \forall\ T \in \mathcal{T}_h \}$ a piecewise linear finite element space.
 Then for the finite element solution $u_h \in V_h$,
 % i.e., $ u_h \in V_h$ such that $a(u_h,v_h) = (f,v_h)$ for all $v_h \in V_h$,
 \begin{equation}
 	\|u - u_h\|_{H^1(\Omega)} \leq C h \|u\|_{H^2(\Omega)}. \label{fee}
-\end{equation}
-
-% The finite element error decreases with order h.
-
+\end{equation}	
+	
 Under the assumption that $\Omega$ is convex and u satisfies the shift theorem (\ref{st}), we also get an $L^2$ estimation for the finite element error:\\[1ex]
 
+\end{frame}
 
+
+
+\begin{frame}{Finite element error}
 Let $z \in H_0^1(\Omega)$ be a solution of $a(z,v) = (u-u_h,v)$ for all  $v \in H_0^1(\Omega)$.
 
 For all $z_h \in V_h \subset H_0^1(\Omega)$, $a(u,z_h) = (f,z_h) = a(u_h,z_h)$. $\Rightarrow a(u-u_h,z_h) = 0$.\\
@@ -170,11 +201,12 @@ Therefore, $\|u-u_h\|_{L^2} \leq \tilde{C}h^2 \|u\|_{H^2}$.\\[2.5ex]
 
 If $\Omega$ is not convex, this inequality need not hold true, too.\\[0.9cm]
 
-%%% Add more possible results for the presentation...
 
+\end{frame}
 
 \section{Refining the grid}
 
+\begin{frame}
 Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in comparison to the square), we now refine the grid close to this critical point and compare the number of grid points we need to get a certain residual error.\\
 
 \centering
@@ -222,14 +254,23 @@ Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in 
 \end{tikzpicture}
 \end{minipage}
 
+\end{frame}
 
 
+\begin{frame}
+\vfill
 
-\newpage
-\emph{Literature:} 
+\centering \Large{\textbf{Vielen Dank für eure Aufmerksamkeit!}}\\[10ex]
 
-%Plot von den Verfassern erstellt.
-
+\begin{figure}[b!]
+\normalsize
+\flushleft
+\vfill
+\small
+Literatur und Graphiken: \url{https://ocw.mit.edu/courses/
+aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec30.pdf} Zugriff: \today
+\end{figure}
+\end{frame}
 
 
 
