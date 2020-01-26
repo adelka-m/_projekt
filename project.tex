@@ -11,7 +11,7 @@
 \usepackage{wrapfig}
 \usepackage{animate}
 %\usepackage{blindtext}
-%\usepackage[bottom=4cm]{geometry}
+%\usepackage[bottom=5cm]{geometry}
 %\pagestyle{empty} % no page numbering
 \usepackage[hidelinks]{hyperref}
 
@@ -114,14 +114,30 @@ Let $\Omega$ be a convex polygonal domain in $\mathbb{R}^2$. If $u$ is the weak 
 \end{equation}\\[0.5ex]
 % --> The solution is two times more "regular" than the right-hand side f. The elliptic differential operator "smoothes"
 
-For a smooth boundary $\partial \Omega$ it even holds that \begin{equation*}
-	\|u\|_{H^{m+2}} \leq C \|f\|_{H^m} \ \text{for} \ f \in  H^m(\Omega) \ \text{and} \ m \geq 0.
+Similar shift theorems exist for \textbf{fractional-order Sobolev spaces} and $0 < s < s_0 < 1$ ($s_0$ is a constant depending on the domain):
+
+\begin{equation*}
+	H^s(\Omega) = W^{s,2}(\Omega) := \left\{ u \in L^2(\Omega): \frac{|u(x)-u(y)|}{|x-y|^{1+s}} \in  L^2(\Omega \times \Omega) \right\}
 \end{equation*}
+\begin{equation*}
+	\|u\|_{H^s(\Omega)} = \|u\|_{W^{s,2}(\Omega)} := \left( \|u\|_{L^2(\Omega)}^2 + \iint_{\Omega \times \Omega} \left( \frac{|u(x)-u(y)|}{|x-y|^{1+s}} \right)^2  \text{d}x \ \text{d}y \right)^\frac{1}{2}
+\end{equation*}
+
+%%% H^s(\Omega) is constructed as the interpolation space between H^1(\Omega) and L^2(\Omega) with s-distance from L^2(\Omega).
+
+Then, 
+\begin{equation*}
+	\|u\|_{H^{2+s}} \leq C \|f\|_{H^s} \ \text{for} \ f \in H^s(\Omega). \label{fo}
+\end{equation*}\\[0.3cm]
+
+
+For a smooth boundary $\partial \Omega$ it even holds that \begin{equation*}
+	\|u\|_{H^{m+2}} \leq C \|f\|_{H^m} \ \text{for} \ f \in  H^m(\Omega) \ \text{and} \ m \in \mathbb{N}_0.
+\end{equation*}
+
 %Do we need to include m=-1? Should we then define it?
-For a square $m=0$ and $m=1$ are possible.
 
-
-These regularity estimates never hold for non-convex polygonal domains like the L-shape.\\[0.5ex]
+For $m=0$ and $m=1$ this is also true for a square. However, the regularity estimate never holds for non-convex polygonal domains like the L-shape.\\[0.5ex]
 
 \begin{minipage}{0.4\textwidth}
 	\includegraphics[scale=0.4]{sol37.png}
@@ -129,7 +145,6 @@ These regularity estimates never hold for non-convex polygonal domains like the 
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 	\includegraphics[scale=0.4]{derivatives2.png}
-
 \end{minipage}
 % Show that the derivative blows up at the kink.
 
@@ -140,46 +155,56 @@ These regularity estimates never hold for non-convex polygonal domains like the 
 
 
 
-
-\newpage
 \section{Finite element error}
-Let $u$ be the weak solution of our elliptic problem, $\mathcal{T}_h$ a regular triangulation of $\Omega$ and $V_h = \{u \in C(\Omega) \cap H_0^1(\Omega): u|_T = \mathbb{P}^1 \ \forall\ T \in \mathcal{T}_h \}$ a piecewise linear finite element space.
-Then for the finite element solution $u_h \in V_h$,
+Let $u$ be the weak solution of our elliptic problem, $\mathcal{T}_h$ a regular triangulation of a polygonal domain $\Omega$, $V_h = \{u \in C(\Omega) \cap H_0^1(\Omega): u|_T = \mathbb{P}^1 \ \forall\ T \in \mathcal{T}_h \}$ a piecewise linear finite element space and $u_h \in V_h$ the finite element solution,
+Then,
 % i.e., $ u_h \in V_h$ such that $a(u_h,v_h) = (f,v_h)$ for all $v_h \in V_h$,
-\begin{equation}
+\begin{equation*}
 	\|u - u_h\|_{H^1(\Omega)} \leq C h \|u\|_{H^2(\Omega)}. \label{fee}
-\end{equation}
+\end{equation*}
 
 % The finite element error decreases with order h.
 
-Under the assumption that $\Omega$ is convex and u satisfies the shift theorem (\ref{st}), we also get an $L^2$ estimation for the finite element error:\\[1ex]
+Under the assumption that $\Omega$ is convex and $u$ satisfies the shift theorem (\ref{st}), we also get an $L^2$ estimation for the finite element error:
 
 
-Let $z \in H_0^1(\Omega)$ be a solution of $a(z,v) = (u-u_h,v)$ for all  $v \in H_0^1(\Omega)$.
+%Let $z \in H_0^1(\Omega)$ be a solution of $a(z,v) = (u-u_h,v)$ for all  $v \in H_0^1(\Omega)$.
 
-For all $z_h \in V_h \subset H_0^1(\Omega)$, $a(u,z_h) = (f,z_h) = a(u_h,z_h)$. $\Rightarrow a(u-u_h,z_h) = 0$.\\
+%For all $z_h \in V_h \subset H_0^1(\Omega)$, $a(u,z_h) = (f,z_h) = a(u_h,z_h)$. $\Rightarrow a(u-u_h,z_h) = 0$.\\
 % $u-u_h \in H_0^1(\Omega)$, cf. \ref{fee}. and \ref{st}???
 
-\medskip
-Hence, $\|u-u_h\|_{L^2}^2 = (u-u_h,u-u_h) = a(z,u-u_h) = a(z-z_h,u-u_h) \leq$\\
-$\overset{\text{CS}}{\leq} \|\nabla(u-u_h)\|_{L^2} \cdot \|\nabla(z-z_h)\|_{L^2} \leq \|u-u_h\|_{H^1}  \cdot \|z-z_h\|_{H^1} \overset{(\ref{fee})}{\leq} Ch^2 \cdot \|u\|_{H^2} \cdot \|z\|_{H^2} \leq$\\
-$\overset{(\ref{st}) z}{\leq} \tilde{C}h^2\cdot \|u\|_{H^2} \cdot \|u-u_h\|_{H^0} = \tilde{C}h^2\cdot \|u\|_{H^2}\cdot \|u-u_h\|_{L^2}.$\\
+%\medskip
+%Hence, $\|u-u_h\|_{L^2}^2 = (u-u_h,u-u_h) = a(z,u-u_h) = a(z-z_h,u-u_h) \leq$\\
+%$\overset{\text{CS}}{\leq} \|\nabla(u-u_h)\|_{L^2} \cdot \|\nabla(z-z_h)\|_{L^2} \leq \|u-u_h\|_{H^1}  \cdot \|z-z_h\|_{H^1} \overset{(\ref{fee})}{\leq} Ch^2 \cdot \|u\|_{H^2} \cdot \|z\|_{H^2} \leq$\\
+%$\overset{(\ref{st}) z}{\leq} \tilde{C}h^2\cdot \|u\|_{H^2} \cdot \|u-u_h\|_{H^0} = \tilde{C}h^2\cdot \|u\|_{H^2}\cdot \|u-u_h\|_{L^2}.$\\
 
-\medskip
-Therefore, $\|u-u_h\|_{L^2} \leq \tilde{C}h^2 \|u\|_{H^2}$.\\[2.5ex]
+%\medskip
+%Therefore, $\|u-u_h\|_{L^2} \leq \tilde{C}h^2 \|u\|_{H^2}$.\\[2.5ex]
 
-If $\Omega$ is not convex, this inequality need not hold true, too.\\[0.9cm]
+\begin{equation*}
+	\|u-u_h\|_{L^2} \leq \tilde{C}h^2 \|u\|_{H^2}.
+\end{equation*}\\[0.5ex]
+
+If $\Omega$ is not convex, this inequality need not hold true.\\[0.8cm]
+
+
+
+%Furthermore, under the assumption that (\ref{fo}) holds, 
+%\begin{equation*}
+%	\|u-u_h\|_{H^1} \leq Ch^{1+s} \|f\|_{H^s} \ \text{for} \ f \in H^s(\Omega).
+%\end{equation*}\\[0.9cm]
 
 %%% Add more possible results for the presentation...
 
 
 \section{Refining the grid}
 
-Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in comparison to the square), we now refine the grid close to this critical point and compare the number of grid points we need to get a certain residual error.\\
-
-\centering
 \begin{minipage}{0.5\textwidth}
-\begin{tikzpicture}[scale=1]
+Since the non-convexity at $(0,0)$ is causing the regularity problems in the L-shape (in comparison to the square), refining the grid close to this critical point should enhance the convergence of the finite element method.\\
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.18]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
  	\draw[step=0.25cm, ultra thin] (-1,-1) grid (1,1);
@@ -194,11 +219,11 @@ Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in 
  		\draw (2pt,\y) -- (-2pt,\y) node[anchor=east] {$\ytext$};
  		
  	\draw (0.5,0.5) node {$\Omega$};
- 		
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.4\textwidth}
-\begin{tikzpicture}[scale=1]
+\begin{minipage}{0.18\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.18]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
  	\draw[step=0.25cm, ultra thin] (-1,-1) grid (1,1);
@@ -224,9 +249,12 @@ Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in 
 
 
 
+\vspace{1.8cm}
 
-\newpage
-\emph{Literature:} 
+
+\textbf{Literature:} \\
+Demlow, Alan: \emph{Notes for Math 663. Chapter 1.} Spring 2016.\\
+Bacuta, C., Bramble, J. H., Xu, Jinchao: \emph{Regularity estimates for elliptic boundary value problems with smooth data on polygonal domains.} January 8, 2003.
 
 %Plot von den Verfassern erstellt.
 
