@@ -20,6 +20,7 @@
 \usecolortheme{wolverine}
 
 
+
 \title{\textbf{Poisson's equation\\
  on an L-shaped domain}}
 \date{\includegraphics[width=4cm]{sol37.png}\\[2ex]
@@ -44,12 +45,13 @@
 
 $\begin{cases}- \Delta u = f \ \text{in} \ \Omega  \\
 \ \ \ \ \  u = 0 \ \text{on} \ \partial \Omega 
-\end{cases}$\\[0.5cm]
+\end{cases}$\\[0.5cm] \pause
 
 Weak formulation with solution $u\in H_0^1(\Omega)$:\\
 
 $\displaystyle a(u,v) = \int_\Omega \nabla u \cdot \nabla v \ \text{d}x = \int_\Omega f v \ \text{d}x = (f,v) \ \ \ \forall v \in H_0^1(\Omega)$\\[0.5cm]
 
+\pause
 
 \begin{minipage}[t]{0.3\textwidth}
 \centering
@@ -97,38 +99,59 @@ $\displaystyle a(u,v) = \int_\Omega \nabla u \cdot \nabla v \ \text{d}x = \int_\
 
 \begin{frame}{Reminder: Sobolev spaces and their norms}
 Let $\Omega \subset \mathbb{R}^n$ be open.\\[0.8cm]
-
-$H^k(\Omega) = \{u \in L^2(\Omega): D^\alpha u \in L^2(\Omega)$ for all $|a| \leq k\}$\\[0.5cm]
+\pause
+$\displaystyle H^k(\Omega) = \{u \in L^2(\Omega): D^\alpha u \in L^2(\Omega)$ for all $|\alpha| \leq k\}$\\[0.5cm]
 %--> $H^0(\Omega) = L^2(\Omega)$
-
-$(u,v)_{H^k} = \sum_{|a| \leq k} \int_\Omega D^\alpha u \ D^\alpha v \ \text{d}x$\\[0.5cm]
-
-$\|u\|_{H^k(\Omega)} = \sqrt{(u,u)_{H^k}}$\\[0.5cm]
-
-$u \in H_0^1(\Omega)$ if $u \in H^1(\Omega)$ and "$u |_ { \partial \Omega} = 0$"
+\pause
+$\displaystyle (u,v)_{H^k} = \sum_{|\alpha| \leq k} \int_\Omega D^\alpha u \ D^\alpha v \ \text{d}x$\\[0.5cm]
+\pause
+$\displaystyle \|u\|_{H^k(\Omega)} = \sqrt{(u,u)_{H^k}}$\\[0.5cm]
+\pause
+$\displaystyle u \in H_0^1(\Omega)$ if $u \in H^1(\Omega)$ and "$u |_ { \partial \Omega} = 0$"
 \end{frame}
 
 
 \section{Shift theorems}
 
 \begin{frame}{Shift theorems}
-Let $\Omega$ be a \emph{convex polygonal} domain in $\mathbb{R}^2$ and $u$ the weak solution to our problem. Then 
-\begin{equation}
+Let $\Omega$ be a \textbf{convex polygonal} domain in $\mathbb{R}^2$ and $u$ the weak solution to our problem. \pause Then 
+\begin{equation*}
 	\| u \|_{H^2} \leq C \| f \|_{H^0} \ \text{for} \ f \in H^0(\Omega) = L^2(\Omega).
-\end{equation}\\[0.5ex]
+\end{equation*}\\[1ex]
 % --> The solution is two times more "regular" than the right-hand side f. The elliptic differential operator "smoothes"
+\pause
+\textbf{Fractional-order Sobolev spaces:}\\[0.1cm]
+Let $0<s<1$.\\[0.2cm]
+\pause
 
+	$\displaystyle H^s(\Omega) = W^{s,2}(\Omega) := \left\{ u \in L^2(\Omega): \frac{|u(x)-u(y)|}{|x-y|^{1+s}} \in  L^2(\Omega \times \Omega) \right\}$
+
+	$\displaystyle\|u\|_{H^s(\Omega)} := \left( \|u\|_{L^2(\Omega)}^2 + \iint_{\Omega \times \Omega} \left( \frac{|u(x)-u(y)|}{|x-y|^{1+s}} \right)^2 \ \text{d}x \ \text{d}y \right)^\frac{1}{2}$
+
+\end{frame}
+
+
+\begin{frame}{Shift theorems}
+
+Let $0 < s < s_0 < 1$ ($s_0$ is a constant depending on the domain). Then,\vspace{-0.2cm}
+
+\begin{equation*}
+	\|u\|_{H^{2+s}} \leq C \|f\|_{H^s} \ \text{for} \ f \in H^s(\Omega).
+\end{equation*}\\[0.5cm]
+
+\pause
 For a smooth boundary $\partial \Omega$ it even holds that \begin{equation*}
-	\|u\|_{H^{m+2}} \leq C \|f\|_{H^m} \ \text{for} \ f \in  H^m(\Omega) \ \text{and} \ m \geq 0.
+	\|u\|_{H^{m+2}} \leq C \|f\|_{H^m} \ \text{for} \ f \in  H^m(\Omega) \ \text{and} \ m \in \mathbb{N}_0.
 \end{equation*}
+\pause
+Here, $m=0$ and $m=1$ also hold for a square domain.
 %Do we need to include m=-1? Should we then define it?
-%For a square $m=0$ and $m=1$ are possible.
+%
+
+%\textbf{But:} This regularity estimate never holds for  for non-convex polygonal domains like the L-shape.
 
 % Similar result can be obtained for fractional-order Sobolev spaces.
 % Add more here??
-
-These regularity estimates never hold for non-convex polygonal domains like the L-shape.
-
 \end{frame}
 
 
@@ -139,10 +162,7 @@ regular triangulation with right-angled triangles\\
 finite element method\\
 conjugate gradients solver\\
 
-\animategraphics[autoresume, height=3.5cm]{15}{sol}{1}{15}
-
-%%% the gif but I need it in single png-frames :(
-%%% Latex does apparently not accept gifs...
+\animategraphics[autoresume, height=3.5cm]{8}{sol}{1}{15} \animategraphics[autoresume, height=4cm]{8}{gif}{0}{20}
 
 \end{frame}
 
@@ -160,7 +180,7 @@ conjugate gradients solver\\
         %\draw[red,ultra thick,rounded corners] (0.62,0.65) rectangle (0.78,0.75);
     \end{scope}
 \end{tikzpicture}
-\end{minipage}
+\end{minipage}\pause
 \begin{minipage}{0.5\textwidth}
 \includegraphics[height=5cm]{derivatives2.png}
 \end{minipage}
@@ -172,46 +192,64 @@ conjugate gradients solver\\
 \section{Finite element error}
 
 \begin{frame}{Finite element error}
-Let $u$ be the weak solution of our elliptic problem, $\mathcal{T}_h$ a regular triangulation of $\Omega$ and $V_h = \{u \in C(\Omega) \cap H_0^1(\Omega): u|_T = \mathbb{P}^1 \ \forall\ T \in \mathcal{T}_h \}$ a piecewise linear finite element space.
-Then for the finite element solution $u_h \in V_h$,
+Let $u$ be the weak solution of our elliptic problem,\\
+$\mathcal{T}_h$ a regular triangulation of a polygonal domain $\Omega$, $V_h = \{u \in C(\Omega) \cap H_0^1(\Omega): u|_T = \mathbb{P}^1 \ \forall\ T \in \mathcal{T}_h \}$ a piecewise linear finite element space and $u_h \in V_h$ the finite element solution, i.e., $ u_h \in V_h$ such that $a(u_h,v_h) = (f,v_h)$ for all $v_h \in V_h$.\\[0.3cm]
+\pause
+Then,
 % i.e., $ u_h \in V_h$ such that $a(u_h,v_h) = (f,v_h)$ for all $v_h \in V_h$,
-\begin{equation}
-	\|u - u_h\|_{H^1(\Omega)} \leq C h \|u\|_{H^2(\Omega)}. \label{fee}
-\end{equation}	
+\begin{equation*}
+	\|u - u_h\|_{H^1} \leq C h \|u\|_{H^2}. 
+\end{equation*}	
 	
-Under the assumption that $\Omega$ is convex and u satisfies the shift theorem (\ref{st}), we also get an $L^2$ estimation for the finite element error:\\[1ex]
+%Under the assumption that , we also get an $L^2$ estimation for the finite element error:\\[1ex]
 
 \end{frame}
 
 
 
 \begin{frame}{Finite element error}
-Let $z \in H_0^1(\Omega)$ be a solution of $a(z,v) = (u-u_h,v)$ for all  $v \in H_0^1(\Omega)$.
-
-For all $z_h \in V_h \subset H_0^1(\Omega)$, $a(u,z_h) = (f,z_h) = a(u_h,z_h)$. $\Rightarrow a(u-u_h,z_h) = 0$.\\
+Additionally, assume that $\Omega$ is convex and the shift theorem $\| u \|_{H^2} \leq C \| f \|_{H^0}$ holds.\\[0.1cm]
+\pause
+Let $z \in H_0^1(\Omega)$ be a solution of $a(z,v) = (u-u_h,v), \ v \in H_0^1(\Omega)$.\\[0.1cm]
+\pause
+For all $z_h \in V_h \subset H_0^1(\Omega)$: $a(u,z_h) = (f,z_h) = a(u_h,z_h)$.\\ \pause
+$\Rightarrow a(u-u_h,z_h) = 0$.\\
 % $u-u_h \in H_0^1(\Omega)$, cf. \ref{fee}. and \ref{st}???
+\pause
+\begin{align*}
+\|u-u_h\|_{L^2}^2 &= \visible<6->{(u-u_h,u-u_h) =}\\
+&\visible<7->{= a(z,u-u_h) =} \visible<8->{a(z-z_h,u-u_h) \leq}\\
+&\visible<9->{\leq \|\nabla(u-u_h)\|_{L^2} \cdot \|\nabla(z-z_h)\|_{L^2} \leq}\\
+&\visible<10->{\leq \|u-u_h\|_{H^1}  \cdot \|z-z_h\|_{H^1} \leq}\\
+\visible<11>{&\leq Ch^2 \cdot \|u\|_{H^2} \cdot \|z\|_{H^2} \leq}\\
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Finite element error}
+\begin{align*}
+&\leq \tilde{C}h^2\cdot \|u\|_{H^2} \cdot \|u-u_h\|_{H^0} =\\
+&\visible<2->{= \tilde{C}h^2\cdot \|u\|_{H^2}\cdot \|u-u_h\|_{L^2}.}
+\end{align*}\\
+
+\pause
+\pause
 
 \medskip
-Hence, $\|u-u_h\|_{L^2}^2 = (u-u_h,u-u_h) = a(z,u-u_h) = a(z-z_h,u-u_h) \leq$\\
-$\overset{\text{CS}}{\leq} \|\nabla(u-u_h)\|_{L^2} \cdot \|\nabla(z-z_h)\|_{L^2} \leq \|u-u_h\|_{H^1}  \cdot \|z-z_h\|_{H^1} \overset{(\ref{fee})}{\leq} Ch^2 \cdot \|u\|_{H^2} \cdot \|z\|_{H^2} \leq$\\
-$\overset{(\ref{st}) z}{\leq} \tilde{C}h^2\cdot \|u\|_{H^2} \cdot \|u-u_h\|_{H^0} = \tilde{C}h^2\cdot \|u\|_{H^2}\cdot \|u-u_h\|_{L^2}.$\\
+$\Rightarrow \|u-u_h\|_{L^2}^2 \leq \tilde{C}h^2\cdot \|u\|_{H^2}\cdot \|u-u_h\|_{L^2}$ \pause
+$\Rightarrow \|u-u_h\|_{L^2} \leq \tilde{C}h^2 \cdot \|u\|_{H^2}$.\\[2.5ex]
 
-\medskip
-Therefore, $\|u-u_h\|_{L^2} \leq \tilde{C}h^2 \|u\|_{H^2}$.\\[2.5ex]
-
+\pause
 If $\Omega$ is not convex, this inequality need not hold true, too.\\[0.9cm]
-
-
 \end{frame}
 
 \section{Refining the grid}
 
-\begin{frame}
-Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in comparison to the square), we now refine the grid close to this critical point and compare the number of grid points we need to get a certain residual error.\\
+\begin{frame}{Refining the grid}
 
 \centering
 \begin{minipage}{0.5\textwidth}
-\begin{tikzpicture}[scale=1]
+\begin{tikzpicture}[scale=2]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
  	\draw[step=0.25cm, ultra thin] (-1,-1) grid (1,1);
@@ -230,7 +268,7 @@ Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in 
 \end{tikzpicture}
 \end{minipage}
 \begin{minipage}{0.4\textwidth}
-\begin{tikzpicture}[scale=1]
+\begin{tikzpicture}[scale=2]
 	%\draw (-1,-1) -- (-1,1) -- (1,1) -- (1,-1) -- (-1,-1);
  	\fill[fill = lightgray] (-1,-1) rectangle (1,1);
  	\draw[step=0.25cm, ultra thin] (-1,-1) grid (1,1);
@@ -260,15 +298,16 @@ Since the kink at $(0,0)$ is causing the regularity problems in the L-shape (in 
 \begin{frame}
 \vfill
 
-\centering \Large{\textbf{Vielen Dank für eure Aufmerksamkeit!}}\\[10ex]
+\centering \Large{\textbf{Thank you for your attention!}}\\[10ex]
 
 \begin{figure}[b!]
 \normalsize
 \flushleft
 \vfill
 \small
-Literatur und Graphiken: \url{https://ocw.mit.edu/courses/
-aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec30.pdf} Zugriff: \today
+\textbf{Literature:} \\
+Demlow, Alan: \emph{Notes for Math 663. Chapter 1.} Spring 2016.\\
+Bacuta, C., Bramble, J. H., Xu, Jinchao: \emph{Regularity estimates for elliptic boundary value problems with smooth data on polygonal domains.} January 8, 2003.
 \end{figure}
 \end{frame}
 
