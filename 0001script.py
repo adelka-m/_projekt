@@ -41,8 +41,8 @@ def adapted_grid_CG(n):
 	p = np.zeros((n,n))
 
 
-	number_of_refined_points = n//5
-	print(number_of_refined_points)
+	number_of_refined_points = n//3
+	
 	refined_grid = {(0,0),(0,1),(1,0),(-1,-1),(-1,0),(0,-1),(1,-1),(-1,1), (2,-1), (2,0), (0,2),(-1,2)}
 	for i in range(number_of_refined_points+1):
 		refined_grid.update([(i,-1), (i,0), (0,i),(-1,i)])
@@ -133,7 +133,7 @@ def adapted_grid_CG(n):
 			#print( "number of steps: ", k, ", for n = ",n )
 			#break
     	
-		if k > n**2//8:
+		if k > n:
 			break
 		
 
@@ -186,20 +186,20 @@ def conjugated_gradients(n):
     	resnew = scalar_multiplication(res,res,n)
 
 
-    	#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
+    	if 1/n**2*resnew < 1e-15:  # mean of the norm^2 of residuum
     	 	#print( np.absolute(res[(n)//2][(n)//2]) )
     	 	#print( "number of steps: ", k, ", for n = ",n )
-    	 	#break
+    	 	break
     	
-    	if k > n**2//8:
+    	if k > n:
     	 	break
 	
 
     	k = k+1
     	p = res + (resnew / resold) * p
     	resold = resnew
-    plt.imshow(u)
-    plt.show()
+    # plt.imshow(u)
+    # plt.show()
     return np.sqrt(1/(n**2)*resnew)
 
 def conjugated_gradients_square(n):
@@ -237,12 +237,12 @@ def conjugated_gradients_square(n):
     	resnew = scalar_multiplication(res,res,n)
 
 
-    	#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
+    	if 1/n**2*resnew < 1e-15:  # mean of the norm^2 of residuum
     	 	#print( np.absolute(res[(n)//2][(n)//2]) )
     	 	#print( "number of steps: ", k, ", for n = ",n )
-    	 	#break
+    	 	break
     	
-    	if k > n**2//8:
+    	if k > n:
     	 	break
 	
 
@@ -255,19 +255,19 @@ def conjugated_gradients_square(n):
 
 
 
-res = []
+res_adapted = []
 res_L = []
 res_Q = []
-N = np.arange(10,36,10)
+N = np.arange(30,76,10)
 for n in N:
 	print(n)
-	res.append(adapted_grid_CG(n+50))
-	#res_L.append(conjugated_gradients(n))
-	#res_Q.append(conjugated_gradients_square(n))
+	res_adapted.append(adapted_grid_CG(n))
+	res_L.append(conjugated_gradients(n))
+	res_Q.append(conjugated_gradients_square(n))
 
-plt.semilogy(N, res, linestyle='dotted',marker='o', label = 'adapted grid')
-#plt.semilogy( N, res_Q, linestyle='dotted',marker='^',label = 'square')
-#plt.semilogy( N, res_L, linestyle='dotted',marker='*',label = 'non adapted grid')
+# plt.semilogy(N, res_adapted, linestyle='dotted',marker='o', label = 'adapted grid')
+plt.semilogy( N, res_Q, linestyle='dotted',marker='^',label = 'square')
+plt.semilogy( N, res_L, linestyle='dotted',marker='*',label = 'L shape')
 plt.legend()
 plt.show()
 
@@ -275,13 +275,11 @@ plt.show()
 # for n in N:
 # 	xx.append(  ((3*(n-1)**2))**alpha * res[0] * ((3*(N[0]-1)**2))**(-alpha) )
 
-# slope_square = 0
-# slope_L = 0
-# # for i in range(1,len(res_square)-1):
-# #  	slope_square = slope_square - 1/(len(res_square)-1) * (res_square[i] - res_square[i+1])
-# #  	slope_L = slope_L - 1/(len(res_square)-1) * (res[i] - res[i+1])
+slope_square = np.log(res_Q[-1]/res_Q[-2])/np.log((N[-1])**2/(N[-2])**2)
+slope_L = np.log(res_L[-1]/res_L[-2])/np.log((N[-1])**2/(N[-2])**2)
+slope_adapted = np.log(res_adapted[-1]/res_adapted[-2])/np.log((N[-1])**2/(N[-2])**2)
 
-# print('slope L:', slope_L,', slope square:', slope_square)
+print('slope L:', slope_L,', slope square:', slope_square, 'slope adapted:', slope_adapted)
 # #plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of -1/2')
 
 
@@ -289,7 +287,6 @@ plt.show()
 # plt.xlabel("Number of points") 
 # plt.ylabel("Error (log scale)")
 # plt.legend()
-plt.show()
 # plt.imshow(res[0], interpolation = 'lanczos', origin = 'center', extent = [-1,1,-1,1])
 # plt.colorbar()
 # plt.show()

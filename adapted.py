@@ -62,26 +62,34 @@ def adapted_grid_CG(n):
 	while True:
 		for i in range(1,2*third):
 			for j in range(1,2*third):
-				#print('first:', i,j)
-				Ap[i][j] = 1/h2 **2 * (4*p[i][j] - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1]))
+				print('first:', i,j)
+				print('first:',n-1- i,j)
+				print('first:', i,n-1-j)
+				Ap[i][j]     = 1/h2 **2 * (4*p[i][j] - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1]))
 				Ap[n-1-i][j] = 1/h2 **2 * (4*p[n-1-i][j] - (p[n-1-(i+1)][j]+p[n-1-(i-1)][j]+p[n-1-i][j+1]+p[n-1-i][j-1]))
 				Ap[i][n-1-j] = 1/h2 **2 * (4*p[i][n-1-j] - (p[i+1][n-1-j]+p[i-1][n-1-j]+p[i][n-1-(j+1)]+p[i][n-1-(j-1)]))
                 
 			for j in range(2*third,half):
-				#print('second:', i,j)
+				print('second:', i,j)
+				print('second:',n-1- i,j)
+				print('second:', i,n-1-j)
 				Ap[i][j] = (2/h1**2 + 2/h2**2) * p[i][j]  -        (1/h2**2)*(p[i+1][j]+p[i-1][j])      -        (1/h1**2) * (p[i][j+1]+p[i][j-1]) 
 				Ap[n-1-i][j] = (2/h1**2 + 2/h2**2) * p[n-1-i][j] - (1/h2**2)*(p[n-1-(i+1)][j]+p[n-1-(i-1)][j]) - (1/h1**2) * (p[n-1-i][j+1]+p[n-1-i][j-1]) 
 				Ap[i][n-1-j] = (2/h1**2 + 2/h2**2) * p[i][n-1-j] - (1/h2**2)*(p[i+1][n-1-j]+p[i-1][n-1-j])     - (1/h1**2) * (p[i][n-1-(j+1)]+p[i][n-1-(j-1)])
 	
 		for i in range(2*third,half):
 			for j in range(2*third,half):
-				#print('third:', i,j)
+				print('third:', i,j)
+				print('third:',n-1- i,j)
+				print('third:', i,n-1-j)
 				Ap[i][j] = 1/h1 **2 * (4*p[i][j] - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1]))
 				Ap[n-1-i][j] = 1/h1 **2 * (4*p[n-1-i][j] - (p[n-1-(i+1)][j]+p[n-1-(i-1)][j]+p[n-1-i][j+1]+p[n-1-i][j-1]))
 				Ap[i][n-1-j] = 1/h1 **2 * (4*p[i][n-1-j] - (p[i+1][n-1-j]+p[i-1][n-1-j]+p[i][n-1-(j+1)]+p[i][n-1-(j-1)]))
                 
 			for j in range(1,2*third):
-				#print('forth:', i,j)
+				print('fourth:', i,j)
+				print('fourth:',n-1- i,j)
+				print('fourth:', i,n-1-j)
 				Ap[i][j] = (2/h1**2 + 2/h2**2) * p[i][j] - (1/h1**2)*(p[i+1][j]+p[i-1][j]) - (1/h2**2)*(p[i][j+1]+p[i][j-1])
 				Ap[n-1-i][j] = (2/h1**2 + 2/h2**2)*p[n-1-i][j] - (1/h1**2)*(p[n-1-(i+1)][j]+p[n-1-(i-1)][j]) - (1/h2**2)*(p[n-1-i][j+1]+p[n-1-i][j-1]) 
 				Ap[i][n-1-j] = (2/h1**2 + 2/h2**2)*p[i][n-1-j] - (1/h1**2)*(p[i+1][n-1-j]+p[i-1][n-1-j])  - (1/h2**2)*(p[i][n-1-(j+1)]+p[i][n-1-(j-1)])
@@ -104,7 +112,7 @@ def adapted_grid_CG(n):
 			print( "number of steps: ", k, ", for n = ",n )
 			#break
     	
-		if k > n**2:
+		if k > 0:
 			print(k)
 			break
 		
@@ -115,7 +123,7 @@ def adapted_grid_CG(n):
 		p = res + (resnew / resold) * p
 		resold = resnew
 
-	return np.sqrt(1/(0.75*n**2)*resnew), u, res[n//2-4:n//2+4,n//2-1:n//2+4]
+	return np.sqrt(1/(0.75*n**2)*resnew), u
 
 
 def conjugated_gradients(n):
@@ -271,13 +279,16 @@ plt.show()
 
 #res = []
 #res_square = []
-res_ad = []
-N = np.arange(5,51,5)
-for n in N:
-	print(n)
-	#res.append( math.sqrt(conjugated_gradients(2*n)/(3*(n-1)**2)) )
-	res_ad.append( adapted_grid_CG(2*n)[0])
-    #res_square.append(conjugated_gradients_square(2*n))
+res_ad, u  = adapted_grid_CG(2*5)
+plt.imshow(u, interpolation = 'none', origin = 'center', extent = [-1,1,-1,1])
+plt.colorbar()
+plt.show()
+# N = np.arange(5,10,5)
+# for n in N:
+# 	print(n)
+# 	#res.append( math.sqrt(conjugated_gradients(2*n)/(3*(n-1)**2)) )
+# 	res_ad.append( adapted_grid_CG(2*n)[0])
+#     #res_square.append(conjugated_gradients_square(2*n))
 
 """
 alpha = np.log(res[-1]/res[-2])/np.log((3*(N[-1]-1)**2)/((3*(N[-2]-1)**2)))
@@ -297,7 +308,7 @@ for i in range(1,len(res_square)-1):
 """
 #print('slope L:', slope_L,', slope square:', slope_square)
 #plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of -1/2')
-plt.semilogy( 2*N[:-3]+1, res_ad, linestyle='dotted',marker='o',label = 'discrete L2 norm of residuum')
+#plt.semilogy( 2*N[:-3]+1, res_ad, linestyle='dotted',marker='o',label = 'discrete L2 norm of residuum')
 #plt.semilogy( 2*N+1, res_square, linestyle='dotted',marker='*',label = 'discrete L2 norm of residuum square')
 
 # plt.title("Value of residual error")
