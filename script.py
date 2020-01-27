@@ -40,10 +40,14 @@ def adapted_grid_CG(n):
 	res = np.zeros((n,n))
 	p = np.zeros((n,n))
 
-
-	number_of_refined_points = n//5
+	number_of_refined_points = n//3
+	refined_grid = {(0,0),(0,1),(1,0),(-1,-1),(-1,0),(0,-1),(1,-1),(-1,1), (2,-1), (2,0), (0,2),(-1,2)}
+	for i in range(number_of_refined_points+1):
+		refined_grid.update([(i,-1), (i,0), (0,i),(-1,i)])
+	
 	h1 = 2/(2*n)
-	h2 = (2-2/n)/(n-2)
+	h2 = (2-number_of_refined_points/n)/(n-number_of_refined_points)
+
 	for i in range(1,(n)//2):
 		for j in range(1,(n)//2):
 			res[i][j] = 1
@@ -58,13 +62,11 @@ def adapted_grid_CG(n):
 	k=1
 	while True:
 
-		refined_grid = {(0,0),(0,1),(1,0),(-1,-1),(-1,0),(0,-1),(1,-1),(-1,1), (2,-1), (2,0), (0,2),(-1,2)}
 		for i,j in refined_grid:
 			i -= 1
-			j -= 1
-			
+			j -= 1	
 			Ap[(n)//2+i][(n)//2+j] = 1/h1**2 * (4*p[(n)//2 +i][(n)//2 +j]  - (p[(n)//2 + i+1][(n)//2 +j]+p[ (n)//2 + i-1][(n)//2 +j]+p[(n)//2 + i][(n)//2 + j+1]+p[(n)//2 +i][(n)//2 +j-1]))
-			
+		
 		for i in range(1,(n)//2):
 			for j in range(1,(n)//2):
 				if i < n//2 -2 and j < n//2 -2:  # region 1
@@ -74,10 +76,8 @@ def adapted_grid_CG(n):
 					Ap[i][n-1-j] = 1/h2 **2 * (4*p[i][n-1-j] - (p[i+1][n-1-j]  +p[i-1][n-1-j]  +p[i][n-1-(j+1)]+p[i][n-1-(j-1)]))
 
 
-				elif  i < n//2 -2 and j > n//2 -3: # region 2
-					# print('nnn:', i,j)
-					# print('nnn1:', n//2 + i+1, j)
-					#print('nn2', n-i-1, j)
+				elif  i < n//2 -2 and j > n//2 -number_of_refined_points-1: # region 2
+
 					a = n//2 + i +1
 					b = n-i-1
 					Ap[i][j] =     (2/h1**2 + 2/h2**2) * p[i][j]  -      (1/h2**2)*(p[i+1][j]+p[i-1][j])      -        (1/h1**2) * (p[i][j+1]  +p[i][j-1]) 
@@ -85,39 +85,33 @@ def adapted_grid_CG(n):
 					Ap[b][j] =     (2/h1**2 + 2/h2**2) * p[b][j] -       (1/h2**2)*(p[b+1][j]+p[b-1][j])     -         (1/h1**2) * (p[b][(j+1)]+p[b][(j-1)])
 					Ap[i][n-j-1] = (2/h1**2 + 2/h2**2) * p[i][n-j-1]  -  (1/h2**2)*(p[i+1][n-j-1]+p[i-1][n-j-1])      -(1/h1**2) * (p[i][n-j-1+1]  +p[i][n-j-1-1])
 
-				elif  j < n//2 -2 and i > n//2 -3:    # region 4
-					# print('AAAA:', i,j)
-					# print('AAAAAAA:', i, n//2+j+1)
-				 # 	print('AAAA!:', n-i-1, j)
+
+				elif  j < n//2 -2 and i > n//2 -number_of_refined_points-1:    # region 4
+
 					a = n//2 +j +1
 					Ap[i][j] =     (2/h1**2 + 2/h2**2) * p[i][j]   - (1/h1**2)*(p[i+1][j]      +p[i-1][j])       - (1/h2**2)*(p[i][j+1]    +p[i][j-1])
 					Ap[n-1-i][j] = (2/h1**2 + 2/h2**2)*p[n-1-i][j] - (1/h1**2)*(p[n-1-(i+1)][j]+p[n-1-(i-1)][j]) - (1/h2**2)*(p[n-1-i][j+1]+p[n-1-i][j-1]) 
 					Ap[i][a] =     (2/h1**2 + 2/h2**2)*p[i][a]     - (1/h1**2)*(p[i+1][a]      +p[i-1][a])       - (1/h2**2)*(p[i][a+1]    +p[i][a-1])
 
 		
-		
+
 		alpha = resold / scalar_multiplication(p,Ap,n)
 		u = u + alpha * p
 		res = res - alpha * Ap
 
-		derivative = derivative_approx(u[n//2][n//2],u[n//2-1][n//2-1], math.sqrt(2)*h1)
-		
 		resnew = scalar_multiplication(res,res,n)
 
-		#print(resnew)
+
 		#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
-			#print( np.absolute(res[(n)//2][(n)//2]) )
-			#print( "number of steps: ", k, ", for n = ",n )
 			#break
     	
-		if k > n**2//8:
+		if k > n:
 			break
 		
 
 		k = k+1
 		p = res + (resnew / resold) * p
 		resold = resnew
-
 
 	return np.sqrt(1/(n**2)*resnew)
 
@@ -138,9 +132,6 @@ def conjugated_gradients(n):
     		res[n-1-i][j] = h*h
     		res[i][n-1-j] = h*h
 
-    # print('kink point at ', n//2)
-    # print(res)
-    # print(p.size)
     p = res.copy()
     resold = scalar_multiplication(res,res,n)
     resnew = 0
@@ -149,8 +140,7 @@ def conjugated_gradients(n):
     while True:
     	for i in range(1,(n)//2):
     		for j in range(1,(n)//2):
-    			Ap[i][j] = 4*p[i][j] - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1])
-
+    			Ap[i][j]     = 4*p[i][j]     - (p[i+1][j]+p[i-1][j]+p[i][j+1]+p[i][j-1])
     			Ap[n-1-i][j] = 4*p[n-1-i][j] - (p[n-1-(i+1)][j]+p[n-1-(i-1)][j]+p[n-1-i][j+1]+p[n-1-i][j-1])
     			Ap[i][n-1-j] = 4*p[i][n-1-j] - (p[i+1][n-1-j]+p[i-1][n-1-j]+p[i][n-1-(j+1)]+p[i][n-1-(j-1)])
     	
@@ -162,25 +152,24 @@ def conjugated_gradients(n):
     	resnew = scalar_multiplication(res,res,n)
 
 
-    	#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
-    	 	#print( np.absolute(res[(n)//2][(n)//2]) )
-    	 	#print( "number of steps: ", k, ", for n = ",n )
-    	 	#break
+    	if 1/n**2*resnew < 1e-15:  # mean of the norm^2 of residuum
+    	 	break
     	
-    	if k > n**2//8:
+    	if k > n:
     	 	break
 	
 
     	k = k+1
     	p = res + (resnew / resold) * p
     	resold = resnew
-    plt.imshow(u)
-    plt.show()
+
     return np.sqrt(1/(n**2)*resnew)
 
+
+
 def conjugated_gradients_square(n):
-    ''' Function for performing CG for our problem. 
-           u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.semidef.   ---> CG  '''
+    ''' Function for performing CG for a square, our problem. 
+           u_xx + u_yy = 1    -->  A u = b    ---> A symmetric, pos.def.   ---> CG  '''
     b = np.zeros((n,n))     
     u = np.zeros((n,n))
     Ap = np.zeros((n,n))
@@ -208,17 +197,13 @@ def conjugated_gradients_square(n):
     	alpha = resold / scalar_multiplication(p,Ap,n)
     	u = u + alpha * p
     	res = res - alpha * Ap
-
-
     	resnew = scalar_multiplication(res,res,n)
 
 
-    	#if 1/n*resnew < 1e-5:  # mean of the norm^2 of residuum
-    	 	#print( np.absolute(res[(n)//2][(n)//2]) )
-    	 	#print( "number of steps: ", k, ", for n = ",n )
-    	 	#break
+    	if 1/n**2*resnew < 1e-15:  # mean of the norm^2 of residuum
+    	 	break
     	
-    	if k > n**2//8:
+    	if k > n:
     	 	break
 	
 
@@ -231,41 +216,25 @@ def conjugated_gradients_square(n):
 
 
 
-res = []
+res_adapted = []
 res_L = []
 res_Q = []
-N = np.arange(20,46,10)
+N = np.arange(30,76,10)
 for n in N:
 	print(n)
-	res.append(adapted_grid_CG(n))
+	res_adapted.append(adapted_grid_CG(n))
 	res_L.append(conjugated_gradients(n))
 	res_Q.append(conjugated_gradients_square(n))
 
-plt.semilogy(N, res, linestyle='dotted',marker='o', label = 'adapted grid')
+
+plt.semilogy(N, res_adapted, linestyle='dotted',marker='o', label = 'adapted grid')
 plt.semilogy( N, res_Q, linestyle='dotted',marker='^',label = 'square')
-plt.semilogy( N, res_L, linestyle='dotted',marker='*',label = 'non adapted grid')
+plt.semilogy( N, res_L, linestyle='dotted',marker='*',label = 'L shape')
 plt.legend()
 plt.show()
 
-# xx = []
-# for n in N:
-# 	xx.append(  ((3*(n-1)**2))**alpha * res[0] * ((3*(N[0]-1)**2))**(-alpha) )
+slope_square = np.log(res_Q[-1]/res_Q[-2])/np.log((N[-1])**2/(N[-2])**2)
+slope_L = np.log(res_L[-1]/res_L[-2])/np.log((N[-1])**2/(N[-2])**2)
+slope_adapted = np.log(res_adapted[-1]/res_adapted[-2])/np.log((N[-1])**2/(N[-2])**2)
 
-# slope_square = 0
-# slope_L = 0
-# # for i in range(1,len(res_square)-1):
-# #  	slope_square = slope_square - 1/(len(res_square)-1) * (res_square[i] - res_square[i+1])
-# #  	slope_L = slope_L - 1/(len(res_square)-1) * (res[i] - res[i+1])
-
-# print('slope L:', slope_L,', slope square:', slope_square)
-# #plt.semilogy( 2*N+1, xx , linestyle='dashed', label = 'order of -1/2')
-
-
-# plt.title("Value of residual error")
-# plt.xlabel("Number of points") 
-# plt.ylabel("Error (log scale)")
-# plt.legend()
-plt.show()
-# plt.imshow(res[0], interpolation = 'lanczos', origin = 'center', extent = [-1,1,-1,1])
-# plt.colorbar()
-# plt.show()
+print('slope L:', slope_L,', slope square:', slope_square, 'slope adapted:', slope_adapted)
